@@ -1,23 +1,23 @@
 [
     {
         "id": 1,
-        "nombre": "Pomada Mate El Estilo",
-        "descripcion": "Pomada de fijación media con acabado natural. Ideal para todo tipo de cabello.",
+        "nombre": "Pomada Cera 'Fijación Suprema'",
+        "descripcion": "Pomada a base de agua con fijación fuerte y brillo medio. Ideal para estilos clásicos (pompadour, slick-back) o modernos que requieren control duradero sin sensación pegajosa. Se elimina fácilmente con agua..",
         "precio": 150,
-        "imagen": "img/productos/pomada_mate.jpg"
+        "imagen": "../img/producto/PomadaFijacionSuprema.png"
     },
     {
         "id": 2,
-        "nombre": "Cera Brillante El Estilo",
-        "descripcion": "Cera de alta fijación con brillo intenso. Perfecta para peinados modernos.",
+        "nombre": "Aceite para Barba 'Efecto Sedoso'",
+        "descripcion": "Blend de aceites naturales (argán, jojoba y almendras) que hidrata profundamente la barba y la piel subyacente. Suaviza el vello, elimina la comezón y añade un brillo sutil. Aroma a sándalo y cedro.",
         "precio": 170,
-        "imagen": "img/productos/cera_brilante.jpg"
+        "imagen": "../img/producto/AceiteBarba.png"
     },
     {
         "id": 3,
-        "nombre": "Shampoo Fortalecedor",
-        "descripcion": "Shampoo con extractos naturales que fortalecen y revitalizan el cabello.",
+        "nombre": "Bálsamo After Shave 'Calma Total'",
+        "descripcion": "Loción cremosa post-afeitado que alivia instantáneamente la irritación y el enrojecimiento. Enriquecida con aloe vera y manzanilla. Deja la piel fresca, hidratada y con un ligero aroma mentolado y cítrico.",
         "precio": 130,
-        "imagen": "img/productos/shampoo_fortalecedor.jpg"
+        "imagen": "../img/producto/BalsamoAfterShave.png"
     }
 ]
