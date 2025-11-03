@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "nombre": "Corte Clásico",
+        "descripcion": "Un corte tradicional con terminaciones precisas, ideal para un look limpio.",
+        "precio": 120,
+        "imagen": "img/servicios/corte_clasico.jpg"
+    },
+    {
+        "id": 2,
+        "nombre": "Afeitado Premium",
+        "descripcion": "Afeitado con toalla caliente, navaja profesional y productos de primera calidad.",
+        "precio": 90,
+        "imagen": "img/servicios/afeitado_premium.jpg"
+    },
+    {
+        "id": 3,
+        "nombre": "Corte + Barba",
+        "descripcion": "Servicio completo para renovar tu estilo, incluye corte, barba y masaje facial.",
+        "precio": 180,
+        "imagen": "img/servicios/corte_barba.jpg"
+    }
+]

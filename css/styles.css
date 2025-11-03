@@ -1,0 +1,52 @@
+/* Estilos personalizados de Barbería El Estilo */
+
+/* Ajustes generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Sección hero */
+.hero {
+    position: relative;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.hero .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== SERVICIOS ===== */
+.servicio-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.servicio-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.servicio-card img {
+    height: 250px;
+    object-fit: cover;
+}
+
+/* ===== PRODUCTOS ===== */
+.producto-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.producto-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.producto-card img {
+    height: 250px;
+    object-fit: cover;
+}

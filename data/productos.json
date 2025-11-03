@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "nombre": "Pomada Mate El Estilo",
+        "descripcion": "Pomada de fijación media con acabado natural. Ideal para todo tipo de cabello.",
+        "precio": 150,
+        "imagen": "img/productos/pomada_mate.jpg"
+    },
+    {
+        "id": 2,
+        "nombre": "Cera Brillante El Estilo",
+        "descripcion": "Cera de alta fijación con brillo intenso. Perfecta para peinados modernos.",
+        "precio": 170,
+        "imagen": "img/productos/cera_brilante.jpg"
+    },
+    {
+        "id": 3,
+        "nombre": "Shampoo Fortalecedor",
+        "descripcion": "Shampoo con extractos naturales que fortalecen y revitalizan el cabello.",
+        "precio": 130,
+        "imagen": "img/productos/shampoo_fortalecedor.jpg"
+    }
+]

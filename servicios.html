@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios | Barbería El Negrito</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="bg-dark text-white">
+        <nav class="navbar navbar-expand-lg navbar-dark container">
+            <a class="navbar-brand fw-bold" href="index.html">Sergio's BarberShop</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="menu">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="servicios.html">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="citas.html">Citas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="pago.html">Pago</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ENCABEZADO -->
+    <section class="bg-light py-5 text-center">
+        <div class="container">
+            <h1 class="fw-bold mb-3">Nuestros Servicios</h1>
+            <p class="lead text-muted">Conoce los servicios que ofrecemos para mantener tu estilo siempre impecable.</p>
+        </div>
+    </section>
+
+    <!-- LISTADO DE SERVICIOS -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row" id="lista-servicios">
+                <!-- Aquí se insertarán las tarjetas desde servicios.json -->
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-dark text-white text-center py-3">
+        <p class="mb-0">© 2025 Barbería El Negrito | Desarrollado por AM SOFTWARE®</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script principal -->
+    <script src="js/principal.js"></script>
+
+    <!-- Script específico para esta página -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const contenedor = document.getElementById("lista-servicios");
+
+            fetch("data/servicios.json")
+                .then(response => response.json())
+                .then(servicios => {
+                    servicios.forEach(servicio => {
+                        const tarjeta = document.createElement("div");
+                        tarjeta.classList.add("col-md-4", "mb-4");
+
+                        tarjeta.innerHTML = `
+                            <div class="card h-100 shadow-sm servicio-card">
+                                <img src="${servicio.imagen}" class="card-img-top" alt="${servicio.nombre}">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title fw-bold">${servicio.nombre}</h5>
+                                    <p class="card-text text-muted">${servicio.descripcion}</p>
+                                    <p class="fw-semibold">$${servicio.precio} MXN</p>
+                                    <a href="citas.html" class="btn btn-primary">Agendar cita</a>
+                                </div>
+                            </div>
+                        `;
+                        contenedor.appendChild(tarjeta);
+                    });
+                })
+                .catch(error => console.error("Error al cargar los servicios:", error));
+        });
+    </script>
+
+</body>
+</html>
