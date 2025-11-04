@@ -1,4 +1,4 @@
-/* Estilos personalizados de Barbería El Estilo */
+/* Estilos personalizados de Barbería El Negrito */
 
 /* Ajustes generales */
 body {
@@ -49,4 +49,42 @@ body {
 .producto-card img {
     height: 250px;
     object-fit: cover;
+}
+
+/* ===== CITAS ===== */
+.citas-section {
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #f8f9fa, #eaeaea);
+}
+
+.citas-card {
+    background-color: #fff;
+    border-radius: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.citas-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.citas-card input,
+.citas-card select {
+    border-radius: 10px;
+}
+
+.citas-card h2 {
+    color: #212529;
+}
+
+#mensaje.text-success {
+    color: #28a745 !important;
+}
+
+#mensaje.text-danger {
+    color: #dc3545 !important;
+}
+
+#mensaje.text-warning {
+    color: #ffc107 !important;
 }
