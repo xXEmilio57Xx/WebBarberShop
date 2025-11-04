@@ -28,6 +28,12 @@
                     <li class="nav-item"><a class="nav-link active" href="productos.html">Productos</a></li>
                     <li class="nav-item"><a class="nav-link" href="citas.html">Citas</a></li>
                     <li class="nav-item"><a class="nav-link" href="pago.html">Pago</a></li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="carrito.html">
+                            <img src="img/carrito.png" alt="">
+                            <span id="cart-count" class="badge bg-primary ms-1" style="display:none;">0</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -60,6 +66,7 @@
 
     <!-- Script principal -->
     <script src="js/principal.js?v=6.0"></script>
+    <script src="./js/cart.js"></script>
 
 
     <!-- Script específico para productos -->
@@ -82,7 +89,13 @@
                                 <h5 class="card-title fw-bold">${producto.nombre}</h5>
                                 <p class="card-text text-muted">${producto.descripcion}</p>
                                 <p class="fw-semibold fs-5 text-success">$${producto.precio} MXN</p>
-                                <button class="btn btn-outline-primary agregar-carrito" data-id="${producto.id}">Agregar al carrito</button>
+                                <button class="btn btn-outline-primary agregar-carrito"
+                                data-id="${producto.id}"
+                                data-nombre="${producto.nombre}"
+                                data-precio="${producto.precio}"
+                                data-imagen="${producto.imagen}">
+                                Agregar al carrito
+                                </button>
                             </div>
                         </div>
                     `;
