@@ -1,0 +1,31 @@
+[
+  {
+    "idProducto": 1,
+    "reseñas": [
+      {
+        "usuario": "Carlos",
+        "calificacion": 5,
+        "comentario": "Excelente pomada, deja un acabado muy natural."
+      },
+      {
+        "usuario": "Luis",
+        "calificacion": 4,
+        "comentario": "Buena fijación, aunque el aroma podría mejorar."
+      }
+    ]
+  },
+  {
+    "idProducto": 2,
+    "reseñas": [
+      {
+        "usuario": "Andrés",
+        "calificacion": 5,
+        "comentario": "El aceite huele increíble y deja la barba muy suave."
+      }
+    ]
+  },
+  {
+    "idProducto": 3,
+    "reseñas": []
+  }
+]
