@@ -1,102 +1,92 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const fechaInput = document.getElementById("fecha");
-  const horaSelect = document.getElementById("hora");
-  const form = document.getElementById("form-cita");
+  // ======= ELEMENTOS =======
+  const selectHora = document.getElementById("hora");
+  const selectServicio = document.getElementById("servicio");
+  const selectBarbero = document.getElementById("id_barbero"); // recuerda agregar este select en HTML
+  const inputFecha = document.getElementById("fecha");
+
   const mensaje = document.getElementById("mensaje");
 
-  // 🔹 Establecer fecha mínima (no se puede elegir un día anterior al actual)
-  const hoy = new Date();
-  const año = hoy.getFullYear();
-  const mes = String(hoy.getMonth() + 1).padStart(2, "0");
-  const dia = String(hoy.getDate()).padStart(2, "0");
-  const fechaMinima = `${año}-${mes}-${dia}`;
-  fechaInput.setAttribute("min", fechaMinima);
-
-  // 🔹 Evento al cambiar la fecha
-  fechaInput.addEventListener("change", () => {
-    const fechaSeleccionada = new Date(fechaInput.value + "T00:00:00");
-    const diaSemana = fechaSeleccionada.getUTCDay(); // 0 = Domingo
-
-    // Bloquear domingos
-    if (diaSemana === 0) {
-      mensaje.textContent = "⛔ Los domingos no se realizan citas. Por favor elige otro día.";
-      mensaje.classList.add("text-danger");
-      fechaInput.value = "";
-      horaSelect.innerHTML = "";
-      return;
+  // ====== CARGAR SERVICIO GUARDADO ======
+  const servicioGuardado = localStorage.getItem("servicioSeleccionado");
+  if (servicioGuardado) {
+    const opciones = selectServicio.options;
+    for (let i = 0; i < opciones.length; i++) {
+      if (opciones[i].textContent.trim().toLowerCase() === servicioGuardado.trim().toLowerCase()) {
+        selectServicio.selectedIndex = i;
+        break;
+      }
     }
+    localStorage.removeItem("servicioSeleccionado");
+  }
 
-    mensaje.textContent = "";
-    generarHoras(fechaInput.value);
-  });
+  // ====== GENERAR HORARIOS DE 09:00 A 18:00 CADA 20 MIN ======
+  function generarHorarios() {
+    const horaInicio = 9 * 60; // 9:00 en minutos
+    const horaFin = 18 * 60;   // 18:00 en minutos
 
-  // 🔹 Generar horarios disponibles de 10:00 a 18:00 cada 20 min
-  function generarHoras(fechaSeleccionada) {
-    horaSelect.innerHTML = "";
-    const inicio = 10 * 60; // 10:00 AM
-    const fin = 18 * 60;    // 6:00 PM
-    const citasGuardadas = JSON.parse(localStorage.getItem("citas")) || [];
+    selectHora.innerHTML = '<option value="">Selecciona una hora</option>'; // reset
 
-    for (let minutos = inicio; minutos < fin; minutos += 20) {
+    for (let minutos = horaInicio; minutos <= horaFin; minutos += 20) {
       const horas = Math.floor(minutos / 60);
       const mins = minutos % 60;
       const horaFormateada = `${String(horas).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
-
-      // Verificar si esa hora ya está ocupada para la fecha seleccionada
-      const ocupada = citasGuardadas.some(
-        c => c.fecha === fechaSeleccionada && c.hora === horaFormateada
-      );
-
-      if (!ocupada) {
-        const option = document.createElement("option");
-        option.value = horaFormateada;
-        option.textContent = horaFormateada;
-        horaSelect.appendChild(option);
-      }
-    }
-
-    // Si todas las horas están ocupadas
-    if (horaSelect.options.length === 0) {
       const option = document.createElement("option");
-      option.textContent = "No hay horarios disponibles";
-      option.disabled = true;
-      horaSelect.appendChild(option);
+      option.value = horaFormateada;
+      option.textContent = horaFormateada;
+      selectHora.appendChild(option);
     }
   }
 
-  // 🔹 Guardar cita (simulada con localStorage)
-  form.addEventListener("submit", e => {
+  generarHorarios();
+
+  // ====== BLOQUEAR HORAS YA OCUPADAS ======
+  function bloquearHoras() {
+    const fecha = inputFecha.value;
+    const idBarbero = selectBarbero.value;
+
+    if (!fecha || !idBarbero) return;
+
+    fetch(`php/obtener_horarios.php?id_barbero=${idBarbero}&fecha=${fecha}`)
+      .then(res => res.json())
+      .then(horasOcupadas => {
+        // habilitar todas primero
+        Array.from(selectHora.options).forEach(opt => opt.disabled = false);
+
+        // deshabilitar horas ocupadas
+        horasOcupadas.forEach(h => {
+          const opt = Array.from(selectHora.options).find(o => o.value === h);
+          if (opt) opt.disabled = true;
+        });
+      });
+  }
+
+  inputFecha.addEventListener('change', bloquearHoras);
+  selectBarbero.addEventListener('change', bloquearHoras);
+
+  // ====== ENVÍO DE FORMULARIO (opcional AJAX) ======
+  const formCita = document.getElementById("form-cita");
+  formCita.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const nombre = document.getElementById("nombre").value.trim();
-    const fecha = fechaInput.value;
-    const hora = horaSelect.value;
-
-    if (!nombre || !fecha || !hora) {
-      mensaje.textContent = "⚠️ Por favor completa todos los campos.";
-      mensaje.classList.add("text-warning");
-      return;
-    }
-
-    // Evitar duplicar la misma hora/fecha
-    let citas = JSON.parse(localStorage.getItem("citas")) || [];
-    const existe = citas.some(c => c.fecha === fecha && c.hora === hora);
-
-    if (existe) {
-      mensaje.textContent = "⛔ Esa hora ya está reservada. Elige otra.";
-      mensaje.classList.add("text-danger");
-      return;
-    }
-
-    const cita = { nombre, fecha, hora };
-    citas.push(cita);
-    localStorage.setItem("citas", JSON.stringify(citas));
-
-    mensaje.textContent = `✅ Cita agendada para ${fecha} a las ${hora}. ¡Te esperamos, ${nombre}!`;
-    mensaje.classList.remove("text-danger", "text-warning");
-    mensaje.classList.add("text-success");
-
-    form.reset();
-    horaSelect.innerHTML = "";
+    const data = new FormData(formCita);
+    fetch("php/agendar_cita.php", {
+      method: "POST",
+      body: data,
+      credentials: "same-origin" 
+    })
+    .then(res => res.text())
+    .then(respuesta => {
+      mensaje.textContent = respuesta;
+      if (respuesta.includes("Cita registrada correctamente")) {
+        bloquearHoras(); // actualizar horas ocupadas inmediatamente
+        formCita.reset();
+      }
+    })
+    .catch(err => {
+      mensaje.textContent = "Error al agendar cita.";
+      console.error(err);
+    });
   });
+
 });

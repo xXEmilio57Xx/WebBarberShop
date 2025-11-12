@@ -4,20 +4,20 @@
         "nombre": "Pomada Cera 'Fijación Suprema'",
         "descripcion": "Pomada a base de agua con fijación fuerte y brillo medio. Ideal para estilos clásicos (pompadour, slick-back) o modernos que requieren control duradero sin sensación pegajosa. Se elimina fácilmente con agua..",
         "precio": 150,
-        "imagen": "../img/producto/PomadaFijacionSuprema.png"
+        "imagen": "http://localhost/SergioBarberShop/img/producto/PomadaFijacionSuprema.png"
     },
     {
         "id": 2,
         "nombre": "Aceite para Barba 'Efecto Sedoso'",
         "descripcion": "Blend de aceites naturales (argán, jojoba y almendras) que hidrata profundamente la barba y la piel subyacente. Suaviza el vello, elimina la comezón y añade un brillo sutil. Aroma a sándalo y cedro.",
         "precio": 170,
-        "imagen": "../img/producto/AceiteBarba.png"
+        "imagen": "http://localhost/SergioBarberShop/img/producto/AceiteBarba.png"
     },
     {
         "id": 3,
         "nombre": "Bálsamo After Shave 'Calma Total'",
         "descripcion": "Loción cremosa post-afeitado que alivia instantáneamente la irritación y el enrojecimiento. Enriquecida con aloe vera y manzanilla. Deja la piel fresca, hidratada y con un ligero aroma mentolado y cítrico.",
         "precio": 130,
-        "imagen": "../img/producto/BalsamoAfterShave.png"
+        "imagen": "http://localhost/SergioBarberShop/img/producto/BalsamoAfterShave.png"
     }
 ]

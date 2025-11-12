@@ -68,35 +68,49 @@
     <!-- Script principal -->
     <script src="js/principal.js"></script>
 
+      <!-- Script externo para cargar servicios (nuevo) -->
+    <script src="js/servicios.js"></script>
+
     <!-- Script específico para esta página -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const contenedor = document.getElementById("lista-servicios");
+        const contenedor = document.getElementById("lista-servicios");
 
-            fetch("data/servicios.json")
-                .then(response => response.json())
-                .then(servicios => {
-                    servicios.forEach(servicio => {
-                        const tarjeta = document.createElement("div");
-                        tarjeta.classList.add("col-md-4", "mb-4");
+        fetch("data/servicios.json")
+            .then(response => response.json())
+            .then(servicios => {
+            servicios.forEach(servicio => {
+                const tarjeta = document.createElement("div");
+                tarjeta.classList.add("col-md-4", "mb-4");
 
-                        tarjeta.innerHTML = `
-                            <div class="card h-100 shadow-sm servicio-card">
-                                <img src="${servicio.imagen}" class="card-img-top" alt="${servicio.nombre}">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title fw-bold">${servicio.nombre}</h5>
-                                    <p class="card-text text-muted">${servicio.descripcion}</p>
-                                    <p class="fw-semibold">$${servicio.precio} MXN</p>
-                                    <a href="citas.html" class="btn btn-primary">Agendar cita</a>
-                                </div>
-                            </div>
-                        `;
-                        contenedor.appendChild(tarjeta);
-                    });
-                })
-                .catch(error => console.error("Error al cargar los servicios:", error));
-        });
-    </script>
+                tarjeta.innerHTML = `
+                <div class="card h-100 shadow-sm servicio-card">
+                    <img src="${servicio.imagen}" class="card-img-top" alt="${servicio.nombre}">
+                    <div class="card-body text-center">
+                    <h5 class="card-title fw-bold">${servicio.nombre}</h5>
+                    <p class="card-text text-muted">${servicio.descripcion}</p>
+                    <p class="fw-semibold">$${servicio.precio} MXN</p>
+                    <button class="btn btn-primary agendar-btn" data-servicio="${servicio.nombre}">Agendar cita</button>
+                    </div>
+                </div>
+                `;
+                contenedor.appendChild(tarjeta);
+            });
+            })
+            .catch(error => console.error("Error al cargar los servicios:", error));
+    });
+
+    // Delegación de eventos para capturar clics en los botones
+    document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("agendar-btn")) {
+        const servicio = e.target.getAttribute("data-servicio");
+        localStorage.setItem("servicioSeleccionado", servicio);
+        window.location.href = "citas.html";
+    }
+    });
+
+</script>
+
 
 </body>
 </html>

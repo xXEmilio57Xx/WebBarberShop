@@ -1,23 +1,23 @@
 [
     {
         "id": 1,
-        "nombre": "Corte Clásico",
+        "nombre": "Corte Clasico",
         "descripcion": "Un corte tradicional con terminaciones precisas, ideal para un look limpio.",
         "precio": 120,
-        "imagen": "../img/servicios/corteClasico.png"
+        "imagen": "http://localhost/SergioBarberShop/img/servicios/corteClasico.png"
     },
     {
         "id": 2,
         "nombre": "Afeitado Premium",
         "descripcion": "Afeitado con toalla caliente, navaja profesional y productos de primera calidad.",
         "precio": 90,
-        "imagen": "../img/servicios/afeitadoPremium.png"
+        "imagen": "http://localhost/SergioBarberShop/img/servicios/afeitadoPremium.png"
     },
     {
         "id": 3,
-        "nombre": "Corte + Barba",
+        "nombre": "Corte y Barba",
         "descripcion": "Servicio completo para renovar tu estilo, incluye corte, barba y masaje facial.",
         "precio": 180,
-        "imagen": "../img/servicios/corteyBarba.png"
+        "imagen": "http://localhost/SergioBarberShop/img/servicios/corteyBarba.png"
     }
 ]

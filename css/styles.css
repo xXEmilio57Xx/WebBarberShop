@@ -52,42 +52,27 @@ body {
 }
 
 /* ===== CITAS ===== */
-.citas-section {
-    min-height: 100vh;
-    background: linear-gradient(to bottom right, #f8f9fa, #eaeaea);
-}
-
 .citas-card {
-    background-color: #fff;
-    border-radius: 15px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #ddd;
+  padding: 2rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
-.citas-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-.citas-card input,
-.citas-card select {
-    border-radius: 10px;
+.citas-section {
+  min-height: 100vh;
+  background: linear-gradient(to right, #e9f0ff, #f8f9fa);
 }
 
 .citas-card h2 {
-    color: #212529;
+  color: #1e3a8a; /* azul */
 }
 
-#mensaje.text-success {
-    color: #28a745 !important;
+.form-label {
+  color: #333;
 }
 
-#mensaje.text-danger {
-    color: #dc3545 !important;
-}
-
-#mensaje.text-warning {
-    color: #ffc107 !important;
-}
 
 /*=== RESEÑAS ===*/
 
