@@ -55,6 +55,57 @@
         </div>
     </section>
 
+
+            <!-- Modal Detalle Producto -->
+    <div class="modal fade" id="modalProducto" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modalTitulo"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+            <div class="col-md-5 text-center">
+                <img id="modalImagen" src="" class="img-fluid rounded" alt="Producto">
+            </div>
+            <div class="col-md-7">
+                <p id="modalDescripcion"></p>
+                <h6>Precio: $<span id="modalPrecio"></span></h6>
+            </div>
+            </div>
+
+            <hr>
+
+            <div id="contenedorReseñas">
+            <h5>Reseñas</h5>
+            <div id="listaReseñas"></div>
+            </div>
+
+            <hr>
+
+            <div id="formReseña">
+            <h6>Agregar reseña</h6>
+            <form id="reseñaForm">
+                <input type="hidden" id="producto_id" name="producto_id">
+                <div class="mb-2">
+                <label for="calificacion" class="form-label">Calificación (1 a 5)</label>
+                <input type="number" id="calificacion" name="calificacion" min="1" max="5" class="form-control" required>
+                </div>
+                <div class="mb-2">
+                <label for="comentario" class="form-label">Comentario</label>
+                <textarea id="comentario" name="comentario" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar reseña</button>
+            </form>
+            </div>
+
+        </div>
+        </div>
+    </div>
+    </div>
+
+
     <!-- FOOTER -->
     <footer class="bg-dark text-white text-center py-3">
         <p class="mb-0">© 2025 Barbería El Negrito | Desarrollado por AM SOFTWARE®</p>
@@ -66,80 +117,10 @@
     <!-- Script principal -->
     <script src="js/principal.js?v=6.0"></script>
     <script src="./js/cart.js"></script>
+    <script src="js/productos.js"></script>
 
 
     <!-- Script específico para productos -->
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const contenedor = document.getElementById("lista-productos");
-
-            // Cargar productos primero
-            fetch("data/productos.json")
-                .then(response => response.json())
-                .then(productos => {
-
-                    // Mostrar los productos en la página
-                    productos.forEach(producto => {
-                        const tarjeta = document.createElement("div");
-                        tarjeta.classList.add("col-md-4", "mb-4");
-
-                        tarjeta.innerHTML = `
-                            <div class="card h-100 shadow-sm producto-card">
-                                <img src="${producto.imagen}" class="card-img-top" alt="${producto.nombre}">
-                                <div class="card-body text-center">
-                                    <h5 class="card-title fw-bold">${producto.nombre}</h5>
-                                    <p class="card-text text-muted">${producto.descripcion}</p>
-                                    <p class="fw-semibold fs-5 text-success">$${producto.precio} MXN</p>
-                                    <button class="btn btn-outline-primary agregar-carrito"
-                                            data-id="${producto.id}"
-                                            data-nombre="${producto.nombre}"
-                                            data-precio="${producto.precio}"
-                                            data-imagen="${producto.imagen}">
-                                        Agregar al carrito
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                        
-                        contenedor.appendChild(tarjeta);
-                    });
-
-                    // 2️Una vez cargados los productos, cargar las reseñas
-                    fetch("data/reseñas.json")
-                        .then(response => response.json())
-                        .then(reseñasData => {
-                            productos.forEach(producto => {
-                                const productoReseñas = reseñasData.find(r => r.idProducto === producto.id);
-
-                                if (productoReseñas && productoReseñas.reseñas.length > 0) {
-                                    const contenedorProducto = contenedor
-                                        .querySelector(`.agregar-carrito[data-id="${producto.id}"]`)
-                                        .closest(".card-body");
-
-                                    const reseñasHTML = document.createElement("div");
-                                    reseñasHTML.classList.add("mt-3", "reseñas");
-
-                                    reseñasHTML.innerHTML = `
-                                        <h6 class="fw-bold mb-2">Reseñas:</h6>
-                                        ${productoReseñas.reseñas.map(r => `
-                                            <div class="border rounded p-2 mb-2 text-start">
-                                                <div class="text-warning">${"★".repeat(r.calificacion)}${"☆".repeat(5 - r.calificacion)}</div>
-                                                <p class="mb-1"><strong>${r.usuario}</strong></p>
-                                                <p class="mb-0">${r.comentario}</p>
-                                            </div>
-                                        `).join("")}
-                                    `;
-
-                                    contenedorProducto.appendChild(reseñasHTML);
-                                }
-                            });
-                        })
-                        .catch(error => console.error("Error al cargar reseñas:", error));
-
-                })
-                .catch(error => console.error("Error al cargar productos:", error));
-        });
-</script>
 
 
 </body>
