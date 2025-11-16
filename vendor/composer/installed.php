@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'name' => '__root__',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '39dbda032d33134d7b1c1485e72667810d51b158',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => true,
+    ),
+    'versions' => array(
+        '__root__' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '39dbda032d33134d7b1c1485e72667810d51b158',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'mercadopago/dx-php' => array(
+            'pretty_version' => '3.7.1',
+            'version' => '3.7.1.0',
+            'reference' => 'ca1c9b495b6b5ba75bed92652110b1ad9ea834c6',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../mercadopago/dx-php',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'mercadopago/sdk' => array(
+            'pretty_version' => 'v0.5.6',
+            'version' => '0.5.6.0',
+            'reference' => '67f65735d5d720a7fc2569163f5c7d150adc613d',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../mercadopago/sdk',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+    ),
+);

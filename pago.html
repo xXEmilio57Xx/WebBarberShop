@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pago Seguro | Barbería El Negrito</title>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="index.html">Barbería El Negrito</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" href="servicios.html">Servicios</a></li>
+        <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
+        <li class="nav-item"><a class="nav-link" href="citas.html">Citas</a></li>
+        <li class="nav-item"><a class="nav-link active" href="pagos.html">Pagos</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- CONTENIDO PRINCIPAL -->
+<main class="container py-5 mt-5 text-center">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-lg border-0 p-5 citas-card">
+        <h2 class="fw-bold mb-3">Pago seguro con Mercado Pago</h2>
+        <p class="text-muted mb-4">Revisa tu carrito y realiza el pago de forma rápida, fácil y segura.</p>
+
+        <!-- CARRITO -->
+        <div id="carrito_html" class="mb-3"></div>
+
+        <!-- BOTÓN MERCADO PAGO -->
+        <div id="wallet_container" class="my-4"></div>
+
+        <p class="text-muted small mt-4">
+          🔒 Tu transacción está protegida mediante los estándares de seguridad de Mercado Pago.
+        </p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="bg-dark text-white text-center py-3 mt-5">
+  <p class="mb-0">© 2025 Barbería El Negrito — Todos los derechos reservados.</p>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const walletContainer = document.getElementById("wallet_container");
+  const carritoHtml = document.getElementById("carrito_html");
+
+  // Leer carrito desde localStorage
+  let cart = [];
+  try {
+    cart = JSON.parse(localStorage.getItem("cart")) || [];
+  } catch(e) {
+    console.error("No se pudo leer el carrito:", e);
+  }
+
+  if(cart.length === 0){
+    carritoHtml.innerHTML = "<p>Tu carrito está vacío.</p>";
+    walletContainer.innerHTML = "";
+    return;
+  }
+
+  // Mostrar carrito en HTML
+  carritoHtml.innerHTML = "";
+  cart.forEach(p => {
+    carritoHtml.innerHTML += `
+      <p>Producto: ${p.nombre}</p>
+      <p>Cantidad: ${p.cantidad}</p>
+      <p>Precio: $${p.precio} MXN</p>
+      <hr>
+    `;
+  });
+
+  try {
+    // Enviar carrito a PHP para crear preferencia
+    const resp = await fetch("php/crear_preferencia.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cart })
+    });
+
+    const data = await resp.json();
+    console.log("Respuesta backend:", data);
+
+    if (!data.preference_id) throw new Error(data?.error || "No se recibió preference_id");
+
+    // Inicializar Mercado Pago
+    const mp = new MercadoPago("APP_USR-e51bb0bd-71f1-435d-9a31-66fea4d2f5c4", { locale: "es-MX" }); // <- reemplaza con tu public key sandbox
+
+    // Crear Checkout Pro
+    mp.bricks().create("wallet", "wallet_container", {
+      initialization: { preferenceId: data.preference_id },
+      customization: { texts: { valueProp: "smart_option" } }
+    });
+
+  } catch(e) {
+    console.error("Error al procesar el pago:", e);
+    walletContainer.innerHTML = `<p class="text-danger">Error al procesar el pago: ${e.message}</p>`;
+  }
+});
+</script>
+
+</body>
+</html>

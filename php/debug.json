@@ -1,0 +1,11 @@
+{
+    "cart": [
+        {
+            "id": "2",
+            "nombre": "Aceite para Barba 'Efecto Sedoso'",
+            "precio": 170,
+            "cantidad": 1,
+            "imagen": "http:\/\/localhost\/SergioBarberShop\/img\/producto\/AceiteBarba.png"
+        }
+    ]
+}
