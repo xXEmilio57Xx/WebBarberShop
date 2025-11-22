@@ -1,13 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pago Seguro | Barbería El Negrito</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Seguro | Barbería El Negrito</title>
 
-<!-- Bootstrap -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <style>
+        .loading-spinner {
+            display: inline-block;
+            width: 2rem;
+            height: 2rem;
+            border: 0.25em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border 0.75s linear infinite;
+        }
+        @keyframes spinner-border {
+            to { transform: rotate(360deg); }
+        }
+        .citas-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            border: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -31,22 +51,43 @@
 </nav>
 
 <!-- CONTENIDO PRINCIPAL -->
-<main class="container py-5 mt-5 text-center">
+<main class="container py-5 mt-5">
   <div class="row justify-content-center">
     <div class="col-md-8">
-      <div class="card shadow-lg border-0 p-5 citas-card">
-        <h2 class="fw-bold mb-3">Pago seguro con Mercado Pago</h2>
-        <p class="text-muted mb-4">Revisa tu carrito y realiza el pago de forma rápida, fácil y segura.</p>
+      <div class="card shadow-lg border-0 citas-card">
+        <div class="card-header bg-primary text-white text-center py-3">
+          <h2 class="fw-bold mb-0">Pago Seguro con Mercado Pago</h2>
+        </div>
+        <div class="card-body p-4">
+          <p class="text-center text-muted mb-4">
+            Revisa tu carrito y realiza el pago de forma rápida, fácil y segura.
+          </p>
 
-        <!-- CARRITO -->
-        <div id="carrito_html" class="mb-3"></div>
+          <!-- CARRITO - Aquí se mostrará el resumen -->
+          <div id="carrito_html" class="mb-4">
+            <div class="text-center">
+              <div class="loading-spinner text-primary"></div>
+              <p class="mt-2">Cargando carrito...</p>
+            </div>
+          </div>
 
-        <!-- BOTÓN MERCADO PAGO -->
-        <div id="wallet_container" class="my-4"></div>
+          <!-- BOTÓN MERCADO PAGO -->
+          <div id="wallet_container" class="my-4">
+            <div class="text-center">
+              <div class="loading-spinner text-primary"></div>
+              <p class="mt-2">Preparando métodos de pago...</p>
+            </div>
+          </div>
 
-        <p class="text-muted small mt-4">
-          🔒 Tu transacción está protegida mediante los estándares de seguridad de Mercado Pago.
-        </p>
+          <div class="alert alert-info mt-4">
+            <div class="d-flex align-items-center">
+              <span class="me-2">🔒</span>
+              <span>
+                <strong>Tu transacción está protegida</strong> mediante los estándares de seguridad de Mercado Pago.
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -62,61 +103,180 @@
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 
 <script>
-document.addEventListener("DOMContentLoaded", async () => {
-  const walletContainer = document.getElementById("wallet_container");
-  const carritoHtml = document.getElementById("carrito_html");
-
-  // Leer carrito desde localStorage
-  let cart = [];
-  try {
-    cart = JSON.parse(localStorage.getItem("cart")) || [];
-  } catch(e) {
-    console.error("No se pudo leer el carrito:", e);
-  }
-
-  if(cart.length === 0){
-    carritoHtml.innerHTML = "<p>Tu carrito está vacío.</p>";
-    walletContainer.innerHTML = "";
-    return;
-  }
-
-  // Mostrar carrito en HTML
-  carritoHtml.innerHTML = "";
-  cart.forEach(p => {
-    carritoHtml.innerHTML += `
-      <p>Producto: ${p.nombre}</p>
-      <p>Cantidad: ${p.cantidad}</p>
-      <p>Precio: $${p.precio} MXN</p>
-      <hr>
+// Función para mostrar errores
+function showError(message) {
+    const walletContainer = document.getElementById("wallet_container");
+    walletContainer.innerHTML = `
+        <div class="alert alert-danger">
+            <h6 class="alert-heading">Error en el proceso de pago</h6>
+            <p class="mb-2">${message}</p>
+            <div class="mt-3">
+                <button class="btn btn-primary me-2" onclick="location.reload()">
+                    Reintentar
+                </button>
+                <a href="productos.html" class="btn btn-outline-secondary">
+                    Volver a Productos
+                </a>
+            </div>
+        </div>
     `;
-  });
+}
 
-  try {
-    // Enviar carrito a PHP para crear preferencia
-    const resp = await fetch("php/crear_preferencia.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ cart })
+// Función para mostrar el resumen del carrito
+function displayCartSummary(cart) {
+    const carritoHtml = document.getElementById("carrito_html");
+    let total = 0;
+    
+    let html = `
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Resumen de tu compra</h5>
+            </div>
+            <div class="card-body">
+    `;
+    
+    cart.forEach((item, index) => {
+        const nombre = item.nombre || 'Producto';
+        const cantidad = item.cantidad || 1;
+        const precio = item.precio || 0;
+        const subtotal = cantidad * precio;
+        total += subtotal;
+        
+        html += `
+            <div class="row border-bottom py-2 ${index === 0 ? 'border-top' : ''}">
+                <div class="col-7">
+                    <strong>${nombre}</strong>
+                </div>
+                <div class="col-2 text-center">
+                    ${cantidad} x
+                </div>
+                <div class="col-3 text-end">
+                    $${precio} MXN
+                </div>
+                <div class="col-12 text-end text-muted small">
+                    Subtotal: $${subtotal} MXN
+                </div>
+            </div>
+        `;
     });
+    
+    html += `
+            <div class="row mt-3 pt-2 border-top">
+                <div class="col-6">
+                    <strong>Total a pagar:</strong>
+                </div>
+                <div class="col-6 text-end">
+                    <strong class="text-primary">$${total} MXN</strong>
+                </div>
+            </div>
+            </div>
+        </div>
+    `;
+    
+    carritoHtml.innerHTML = html;
+}
 
-    const data = await resp.json();
-    console.log("Respuesta backend:", data);
+// Función principal
+document.addEventListener("DOMContentLoaded", async () => {
+    const walletContainer = document.getElementById("wallet_container");
+    const carritoHtml = document.getElementById("carrito_html");
 
-    if (!data.preference_id) throw new Error(data?.error || "No se recibió preference_id");
+    if (!walletContainer) {
+        console.error("No se encontró el contenedor de Mercado Pago");
+        return;
+    }
 
-    // Inicializar Mercado Pago
-    const mp = new MercadoPago("APP_USR-e51bb0bd-71f1-435d-9a31-66fea4d2f5c4", { locale: "es-MX" }); // <- reemplaza con tu public key sandbox
+    // Obtener carrito del localStorage
+    let cart = [];
+    try {
+        const cartData = localStorage.getItem("cart");
+        cart = JSON.parse(cartData) || [];
+        console.log("🛒 Carrito obtenido:", cart);
+    } catch (e) {
+        console.error("Error leyendo carrito:", e);
+        showError("Error al cargar el carrito de compras");
+        return;
+    }
 
-    // Crear Checkout Pro
-    mp.bricks().create("wallet", "wallet_container", {
-      initialization: { preferenceId: data.preference_id },
-      customization: { texts: { valueProp: "smart_option" } }
-    });
+    // Validar carrito
+    if (!Array.isArray(cart) || cart.length === 0) {
+        carritoHtml.innerHTML = `
+            <div class="alert alert-warning">
+                <h6 class="alert-heading">Carrito vacío</h6>
+                <p class="mb-3">No hay productos en tu carrito.</p>
+                <a href="productos.html" class="btn btn-primary">Ir a Productos</a>
+            </div>
+        `;
+        walletContainer.innerHTML = "";
+        return;
+    }
 
-  } catch(e) {
-    console.error("Error al procesar el pago:", e);
-    walletContainer.innerHTML = `<p class="text-danger">Error al procesar el pago: ${e.message}</p>`;
-  }
+    // Mostrar resumen del carrito
+    displayCartSummary(cart);
+
+    // Crear preferencia e inicializar Mercado Pago
+    try {
+        console.log("📤 Enviando carrito al backend...");
+        
+        const response = await fetch("php/crear_preferencia.php", {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ cart })
+        });
+
+        console.log("📥 Estado de respuesta:", response.status, response.statusText);
+
+        const responseText = await response.text();
+        console.log("📄 Respuesta del servidor:", responseText);
+
+        // Verificar si es HTML (error)
+        if (responseText.trim().startsWith('<!DOCTYPE') || responseText.includes('<html') || responseText.includes('<?php')) {
+            console.error("❌ El servidor devolvió HTML en lugar de JSON");
+            throw new Error("Error de configuración del servidor. Contacta al administrador.");
+        }
+
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error("❌ Error parseando JSON:", parseError);
+            throw new Error("Respuesta inválida del servidor. Intenta nuevamente.");
+        }
+
+        if (!response.ok || !data.id) {
+            const errorMsg = data.error || data.message || "No se pudo crear la sesión de pago";
+            throw new Error(errorMsg);
+        }
+
+        console.log("✅ Preferencia creada:", data.id);
+
+        // Inicializar Mercado Pago
+        const mp = new MercadoPago("APP_USR-e51bb0bd-71f1-435d-9a31-66fea4d2f5c4", {
+            locale: "es-MX"
+        });
+
+        // Limpiar contenedor y mostrar wallet
+        walletContainer.innerHTML = "";
+        
+        await mp.bricks().create("wallet", "wallet_container", {
+            initialization: { 
+                preferenceId: data.id 
+            },
+            customization: {
+                texts: { 
+                    valueProp: "smart_option" 
+                }
+            }
+        });
+
+        console.log("🎉 Wallet de Mercado Pago inicializado correctamente");
+
+    } catch (error) {
+        console.error("❌ Error en el proceso de pago:", error);
+        showError(error.message);
+    }
 });
 </script>
 
