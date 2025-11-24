@@ -1,0 +1,28 @@
+RAW RECIBIDO:
+{"cart":[{"id":"1","nombre":"Pomada para cabello","precio":120,"imagen":"http://localhost/SergioBarberShop/img/producto/PomadaFijacionSuprema.png","cantidad":1}]}RAW:
+
+
+RAW:
+{"cart":[{"id":"1","nombre":"Pomada para cabello","precio":120,"imagen":"http://localhost/SergioBarberShop/img/producto/PomadaFijacionSuprema.png","cantidad":1}]}
+
+RAW:
+{"cart":[{"id":"1","nombre":"Pomada para cabello","precio":120,"imagen":"http://localhost/SergioBarberShop/img/producto/PomadaFijacionSuprema.png","cantidad":1}]}
+
+RAW:
+
+
+RAW:
+
+
+RAW:
+
+
+RAW:
+{"cart":[{"id":"3","nombre":"Bálsamo After Shave 'Calma Total'","precio":100,"imagen":"http://localhost/SergioBarberShop/img/producto/BalsamoAfterShave.png","cantidad":1}]}
+
+RAW:
+{"cart":[{"id":"3","nombre":"Bálsamo After Shave 'Calma Total'","precio":100,"imagen":"http://localhost/SergioBarberShop/img/producto/BalsamoAfterShave.png","cantidad":1}]}
+
+RAW:
+{"cart":[{"id":"3","nombre":"Bálsamo After Shave 'Calma Total'","precio":100,"imagen":"http://localhost/SergioBarberShop/img/producto/BalsamoAfterShave.png","cantidad":1}]}
+

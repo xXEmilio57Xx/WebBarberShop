@@ -1,150 +1,73 @@
-// Función principal - ACTUALIZADA
-document.addEventListener("DOMContentLoaded", async () => {
-    const walletContainer = document.getElementById("wallet_container");
+function displayCartSummary(cart) {
     const carritoHtml = document.getElementById("carrito_html");
+    let total = 0;
+    let html = `<div class="card"><div class="card-body">`;
 
-    if (!walletContainer) {
-        console.error("No se encontró el contenedor de Mercado Pago");
-        return;
-    }
+    cart.forEach(item => {
+        const subtotal = item.precio * item.cantidad;
+        total += subtotal;
 
-    // Obtener carrito del localStorage - FORMA MÁS SEGURA
-    let cart = [];
-    try {
-        const cartData = localStorage.getItem("cart");
-        console.log("📦 Raw cart data from localStorage:", cartData);
-        
-        if (cartData) {
-            cart = JSON.parse(cartData);
-        }
-        
-        // Asegurarnos que es un array
-        if (!Array.isArray(cart)) {
-            console.warn("Cart no es array, convirtiendo:", cart);
-            cart = [];
-        }
-        
-        console.log("🛒 Carrito procesado:", cart);
-        
-    } catch (e) {
-        console.error("❌ Error leyendo carrito:", e);
-        cart = [];
-    }
-
-    // Validar carrito de forma más estricta
-    const validCart = cart.filter(item => {
-        return item && 
-               typeof item === 'object' && 
-               (item.nombre || item.name) && 
-               (item.precio || item.price) &&
-               (item.cantidad || item.quantity);
-    });
-
-    console.log("✅ Carrito validado:", validCart);
-
-    if (validCart.length === 0) {
-        carritoHtml.innerHTML = `
-            <div class="alert alert-warning">
-                <h6 class="alert-heading">Carrito vacío o inválido</h6>
-                <p class="mb-3">No hay productos válidos en tu carrito.</p>
-                <div class="mt-2">
-                    <a href="productos.html" class="btn btn-primary me-2">Ir a Productos</a>
-                    <button class="btn btn-outline-secondary" onclick="localStorage.removeItem('cart'); location.reload();">
-                        Limpiar Carrito
-                    </button>
-                </div>
+        html += `
+            <div class="d-flex justify-content-between border-bottom py-2">
+                <div><strong>${item.nombre}</strong><br><small>${item.cantidad} x $${item.precio} MXN</small></div>
+                <div>$${subtotal} MXN</div>
             </div>
         `;
-        walletContainer.innerHTML = "";
+    });
+
+    html += `
+        <div class="d-flex justify-content-between mt-3 pt-2 border-top">
+            <strong>Total:</strong>
+            <strong class="text-primary">$${total} MXN</strong>
+        </div>
+    </div></div>`;
+
+    carritoHtml.innerHTML = html;
+    return total;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    if (cart.length === 0) {
+        document.getElementById("carrito_html").innerHTML = `<div class="alert alert-warning">Carrito vacío</div>`;
         return;
     }
 
-    // Mostrar resumen del carrito
-    displayCartSummary(validCart);
+    const total = displayCartSummary(cart);
 
-    // Crear preferencia e inicializar Mercado Pago
-    try {
-        console.log("📤 Enviando carrito al backend...", validCart);
-        
-        // Preparar datos para enviar
-        const requestData = {
-            cart: validCart.map(item => ({
-                id: item.id || Math.random().toString(36).substr(2, 9),
-                nombre: item.nombre || item.name,
-                precio: parseFloat(item.precio || item.price),
-                cantidad: parseInt(item.cantidad || item.quantity || 1)
-            }))
-        };
-        
-        console.log("📨 Datos a enviar:", requestData);
-
-        const response = await fetch("php/crear_preferencia.php", {
-            method: "POST",
-            headers: { 
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            body: JSON.stringify(requestData)
-        });
-
-        console.log("📥 Estado de respuesta:", response.status, response.statusText);
-
-        const responseText = await response.text();
-        console.log("📄 Respuesta completa del servidor:", responseText);
-
-        // Verificar si es HTML (error)
-        if (responseText.trim().startsWith('<!DOCTYPE') || 
-            responseText.includes('<html') || 
-            responseText.includes('<?php') ||
-            responseText.includes('Warning:') ||
-            responseText.includes('Notice:')) {
-            console.error("❌ El servidor devolvió HTML/errores en lugar de JSON");
-            throw new Error("Error de configuración del servidor. Contacta al administrador.");
-        }
-
-        let data;
-        try {
-            data = JSON.parse(responseText);
-        } catch (parseError) {
-            console.error("❌ Error parseando JSON:", parseError);
-            console.error("📄 Texto que falló:", responseText);
-            throw new Error("Respuesta inválida del servidor. Intenta nuevamente.");
-        }
-
-        if (!response.ok || data.error) {
-            const errorMsg = data.error || data.message || "No se pudo crear la sesión de pago";
-            throw new Error(errorMsg);
-        }
-
-        if (!data.id) {
-            throw new Error("No se recibió ID de preferencia del servidor");
-        }
-
-        console.log("✅ Preferencia creada exitosamente:", data.id);
-
-        // Inicializar Mercado Pago
-        const mp = new MercadoPago("APP_USR-e51bb0bd-71f1-435d-9a31-66fea4d2f5c4", {
-            locale: "es-MX"
-        });
-
-        // Limpiar contenedor y mostrar wallet
-        walletContainer.innerHTML = "";
-        
-        await mp.bricks().create("wallet", "wallet_container", {
-            initialization: { 
-                preferenceId: data.id 
-            },
-            customization: {
-                texts: { 
-                    valueProp: "smart_option" 
-                }
+    paypal.Buttons({
+        createOrder: async () => {
+            const response = await fetch('php/crear_orden.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cart })
+            });
+            const data = await response.json();
+            if (!data.id) {
+                document.getElementById("mensaje").innerHTML = `<div class="alert alert-danger">Error al crear la orden.</div>`;
+                throw new Error('No se recibió orderID');
             }
-        });
-
-        console.log("🎉 Wallet de Mercado Pago inicializado correctamente");
-
-    } catch (error) {
-        console.error("❌ Error en el proceso de pago:", error);
-        showError(error.message);
-    }
+            return data.id;
+        },
+        onApprove: async (data) => {
+            const response = await fetch('php/capturar_orden.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderID: data.orderID })
+            });
+            const result = await response.json();
+            if (result.status === 'COMPLETED') {
+                document.getElementById("mensaje").innerHTML = `<div class="alert alert-success">Pago completado correctamente!</div>`;
+                localStorage.removeItem('cart');
+                document.getElementById("carrito_html").innerHTML = "";
+            } else {
+                document.getElementById("mensaje").innerHTML = `<div class="alert alert-danger">Pago no completado.</div>`;
+            }
+        },
+        onError: (err) => {
+            document.getElementById("mensaje").innerHTML = `<div class="alert alert-danger">Error en el pago.</div>`;
+            console.error(err);
+        }
+    }).render('#paypal-button-container');
 });

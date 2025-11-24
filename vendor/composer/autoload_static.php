@@ -4,35 +4,45 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit4941dc4277c30c1c00634375143c6e11
+class ComposerStaticInit2668ad7f0dc9a2dcc39d0bd88fd9ea5b
 {
     public static $prefixLengthsPsr4 = array (
-        'M' =>
+        'S' =>
         array (
-            'MercadoPago\\' => 12,
+            'Sample\\' => 7,
+        ),
+        'P' =>
+        array (
+            'PayPalHttp\\' => 11,
+            'PayPalCheckoutSdk\\' => 18,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'MercadoPago\\' =>
+        'Sample\\' =>
         array (
-            0 => __DIR__ . '/..' . '/mercadopago/dx-php/src/MercadoPago',
+            0 => __DIR__ . '/..' . '/paypal/paypal-checkout-sdk/samples',
+        ),
+        'PayPalHttp\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/paypal/paypalhttp/lib/PayPalHttp',
+        ),
+        'PayPalCheckoutSdk\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/paypal/paypal-checkout-sdk/lib/PayPalCheckoutSdk',
         ),
     );
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'MP' => __DIR__ . '/..' . '/mercadopago/sdk/lib/mercadopago.php',
-        'MPRestClient' => __DIR__ . '/..' . '/mercadopago/sdk/lib/mercadopago.php',
-        'MercadoPagoException' => __DIR__ . '/..' . '/mercadopago/sdk/lib/mercadopago.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit4941dc4277c30c1c00634375143c6e11::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit4941dc4277c30c1c00634375143c6e11::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit4941dc4277c30c1c00634375143c6e11::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit2668ad7f0dc9a2dcc39d0bd88fd9ea5b::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit2668ad7f0dc9a2dcc39d0bd88fd9ea5b::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit2668ad7f0dc9a2dcc39d0bd88fd9ea5b::$classMap;
 
         }, null, ClassLoader::class);
     }
