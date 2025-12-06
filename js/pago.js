@@ -1,73 +1,75 @@
-function displayCartSummary(cart) {
+function displayCartSummary(cart, descuento = 0) {
     const carritoHtml = document.getElementById("carrito_html");
-    let total = 0;
-    let html = `<div class="card"><div class="card-body">`;
 
+    let subtotal = 0;
+
+    let html = `
+        <div class="card">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Resumen de tu compra</h5>
+        </div>
+        <div class="card-body">
+    `;
+
+    // 🔹 Productos listados
     cart.forEach(item => {
-        const subtotal = item.precio * item.cantidad;
-        total += subtotal;
+        const itemSubtotal = item.precio * item.cantidad;
+        subtotal += itemSubtotal;
 
         html += `
             <div class="d-flex justify-content-between border-bottom py-2">
-                <div><strong>${item.nombre}</strong><br><small>${item.cantidad} x $${item.precio} MXN</small></div>
-                <div>$${subtotal} MXN</div>
+                <div>
+                    <strong>${item.nombre}</strong><br>
+                    <small>${item.cantidad} x $${item.precio} MXN</small>
+                </div>
+                <div>$${itemSubtotal.toFixed(2)} MXN</div>
             </div>
         `;
     });
 
+    // 🔹 Mostrar SUBTOTAL
     html += `
         <div class="d-flex justify-content-between mt-3 pt-2 border-top">
-            <strong>Total:</strong>
-            <strong class="text-primary">$${total} MXN</strong>
+            <strong>Subtotal:</strong>
+            <strong>$${subtotal.toFixed(2)} MXN</strong>
         </div>
-    </div></div>`;
+    `;
 
-    carritoHtml.innerHTML = html;
-    return total;
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    if (cart.length === 0) {
-        document.getElementById("carrito_html").innerHTML = `<div class="alert alert-warning">Carrito vacío</div>`;
-        return;
+    // 🔹 DESCUENTO
+    if (descuento > 0) {
+        html += `
+            <div class="d-flex justify-content-between mt-2 text-success">
+                <strong>Descuento:</strong>
+                <strong>-$${descuento.toFixed(2)} MXN</strong>
+            </div>
+        `;
     }
 
-    const total = displayCartSummary(cart);
+    // 🔹 IVA 16%
+    const base = subtotal - descuento;
+    const iva = base * 0.16;
 
-    paypal.Buttons({
-        createOrder: async () => {
-            const response = await fetch('php/crear_orden.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cart })
-            });
-            const data = await response.json();
-            if (!data.id) {
-                document.getElementById("mensaje").innerHTML = `<div class="alert alert-danger">Error al crear la orden.</div>`;
-                throw new Error('No se recibió orderID');
-            }
-            return data.id;
-        },
-        onApprove: async (data) => {
-            const response = await fetch('php/capturar_orden.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ orderID: data.orderID })
-            });
-            const result = await response.json();
-            if (result.status === 'COMPLETED') {
-                document.getElementById("mensaje").innerHTML = `<div class="alert alert-success">Pago completado correctamente!</div>`;
-                localStorage.removeItem('cart');
-                document.getElementById("carrito_html").innerHTML = "";
-            } else {
-                document.getElementById("mensaje").innerHTML = `<div class="alert alert-danger">Pago no completado.</div>`;
-            }
-        },
-        onError: (err) => {
-            document.getElementById("mensaje").innerHTML = `<div class="alert alert-danger">Error en el pago.</div>`;
-            console.error(err);
-        }
-    }).render('#paypal-button-container');
-});
+    html += `
+        <div class="d-flex justify-content-between mt-2">
+            <strong>IVA (16%):</strong>
+            <strong>$${iva.toFixed(2)} MXN</strong>
+        </div>
+    `;
+
+    // 🔹 TOTAL FINAL
+    const totalFinalCalculado = base + iva;
+
+    html += `
+        <div class="d-flex justify-content-between mt-3 pt-2 border-top">
+            <strong>Total final:</strong>
+            <strong id="totalFinalTexto" class="text-primary">$${totalFinalCalculado.toFixed(2)} MXN</strong>
+        </div>
+        </div>
+        </div>
+    `;
+
+    carritoHtml.innerHTML = html;
+
+    return totalFinalCalculado;
+}
+

@@ -31,10 +31,11 @@
                 </ul>
 
                 <!-- BUSCADOR -->
-                <form class="d-flex me-3" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Buscar..." id="searchInput">
-                    <button class="btn btn-primary" type="button" onclick="buscar()">Buscar</button>
+                <form class="d-flex me-3" role="search" onsubmit="buscar(event)">
+                    <input class="form-control me-2" type="search" placeholder="Buscar Productos" id="searchInput">
+                    <button class="btn btn-primary" type="button" onclick="buscar(event)">Buscar</button>
                 </form>
+
 
                 <!-- CARRITO -->
                 <a class="nav-link" href="carrito.html">
@@ -111,5 +112,20 @@
             window.location.href = `productos.html?search=${encodeURIComponent(q)}`;
         }
     </script>
+    <script>
+        function buscar(e) {
+            if (e) e.preventDefault(); // Evita recargar la página
+
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!q) {
+            alert("Escribe algo para buscar");
+            return;
+    }
+
+    // Mandamos la búsqueda a productos.html
+    window.location.href = `productos.html?search=${encodeURIComponent(q)}`;
+}
+</script>
+
 </body>
 </html>
