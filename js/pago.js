@@ -1,5 +1,7 @@
 let descuentoActual = 0; // Descuento aplicado
-let totalFinal = 0; // Total final después del descuento
+let subtotalGlobal = 0;
+let ivaGlobal = 0;
+let totalFinalGlobal = 0;
 
 // ----------------------------
 // MOSTRAR RESUMEN DEL CARRITO
@@ -31,32 +33,49 @@ function displayCartSummary(cart) {
         `;
     });
 
+    const iva = subtotal * 0.16;
+    let totalFinal = subtotal + iva - descuentoActual;
+    if (totalFinal < 0) totalFinal = 0;
+
     html += `
         <div class="d-flex justify-content-between mt-3">
             <strong>Subtotal:</strong>
-            <strong id="subtotalTexto">$${subtotal.toFixed(2)} MXN</strong>
+            <strong>$${subtotal.toFixed(2)} MXN</strong>
         </div>
-        <div class="d-flex justify-content-between mt-2 text-success" id="descuentoRow" style="display:none;">
+
+        <div class="d-flex justify-content-between">
+            <strong>IVA (16%):</strong>
+            <strong>$${iva.toFixed(2)} MXN</strong>
+        </div>
+
+        <div class="d-flex justify-content-between mt-2 text-success" id="descuentoRow" style="${descuentoActual > 0 ? "flex" : "none"};">
             <strong>Descuento:</strong>
-            <strong id="descuentoTexto">-$0.00 MXN</strong>
+            <strong id="descuentoTexto">-$${descuentoActual.toFixed(2)} MXN</strong>
         </div>
+
         <div class="d-flex justify-content-between mt-3 pt-2 border-top">
             <strong>Total final:</strong>
-            <strong id="totalFinalTexto" class="text-primary">$${subtotal.toFixed(2)} MXN</strong>
+            <strong id="totalFinalTexto" class="text-primary">$${totalFinal.toFixed(2)} MXN</strong>
         </div>
+
         </div>
         </div>
     `;
 
     carritoHtml.innerHTML = html;
 
-    return subtotal;
+    // Guardar globales
+    subtotalGlobal = subtotal;
+    ivaGlobal = iva;
+    totalFinalGlobal = totalFinal;
+
+    return { subtotal, iva, totalFinal };
 }
 
 // ----------------------------
-// RENDERIZAR PAYPAL
+// PAYPAL
 // ----------------------------
-function inicializarPago(cart, totalFinal) {
+function inicializarPago(cart) {
 
     document.getElementById("paypal-button-container").innerHTML = "";
 
@@ -69,11 +88,14 @@ function inicializarPago(cart, totalFinal) {
                 body: JSON.stringify({
                     cart: cart,
                     descuento: descuentoActual,
-                    totalFinal: totalFinal
+                    subtotal: subtotalGlobal,
+                    iva: ivaGlobal,
+                    totalFinal: totalFinalGlobal
                 })
             });
 
             const data = await response.json();
+
             return data.id;
         },
 
@@ -97,7 +119,6 @@ function inicializarPago(cart, totalFinal) {
     }).render("#paypal-button-container");
 }
 
-
 // ----------------------------
 // CARGAR CARRITO AL INICIO
 // ----------------------------
@@ -111,13 +132,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    let subtotal = displayCartSummary(cart);
-    totalFinal = subtotal;
+    displayCartSummary(cart);
 
-    inicializarPago(cart, totalFinal);
+    inicializarPago(cart);
 
     // -----------------------------------
-    // APLICAR CUPÓN DE DESCUENTO
+    // APLICAR CUPÓN
     // -----------------------------------
     document.getElementById("btnAplicarCupon").addEventListener("click", async () => {
 
@@ -142,23 +162,12 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Guardamos el descuento EXACTO del cupón
         descuentoActual = parseFloat(data.descuento);
-
-        document.getElementById("descuentoRow").style.display = "flex";
-        document.getElementById("descuentoTexto").textContent = `-$${descuentoActual.toFixed(2)} MXN`;
-
-        // recalcular total
-        totalFinal = subtotal - descuentoActual;
-        if (totalFinal < 0) totalFinal = 0;
-
-        document.getElementById("totalFinalTexto").textContent = `$${totalFinal.toFixed(2)} MXN`;
-
         cuponMensaje.innerHTML = `<div class="text-success">¡Cupón aplicado correctamente!</div>`;
 
-        // REGENERAR PAYPAL
-        inicializarPago(cart, totalFinal);
+        displayCartSummary(cart);
+
+        inicializarPago(cart);
     });
 });
-
 

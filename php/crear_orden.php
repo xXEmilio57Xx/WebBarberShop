@@ -18,15 +18,16 @@ $input = json_decode(file_get_contents("php://input"), true);
 
 $cart = $input["cart"] ?? [];
 $descuento = floatval($input["descuento"] ?? 0);
-$totalFinal = floatval($input["totalFinal"] ?? 0); // ← VIENE DEL FRONTEND
+$iva = floatval($input["iva"] ?? 0);
+$totalFinal = floatval($input["totalFinal"] ?? 0); 
 
 if (empty($cart)) {
     echo json_encode(["error" => "Carrito vacío"]);
     exit;
 }
 
-// Si el frontend no envió totalFinal, generarlo aquí como respaldo
-$total = 0;
+// Calcular subtotal SIN DESCUENTO
+$subtotal = 0;
 $items = [];
 
 foreach ($cart as $p) {
@@ -42,18 +43,19 @@ foreach ($cart as $p) {
         "quantity" => strval($cantidad)
     ];
 
-    $total += ($precio * $cantidad);
+    $subtotal += ($precio * $cantidad);
 }
 
-// Si por alguna razón no vino totalFinal, lo calculamos
+// Validación: si el frontend no envió totalFinal, calcularlo
 if ($totalFinal <= 0) {
-    $totalFinal = $total - $descuento;
+    $subtotalConDescuento = $subtotal - $descuento;
+    $totalFinal = $subtotalConDescuento + $iva;
 }
 
-if ($totalFinal < 0) {
-    $totalFinal = 0;
-}
+// PayPal NO acepta negativos
+if ($totalFinal < 0) $totalFinal = 0;
 
+// Construir orden
 $request = new OrdersCreateRequest();
 $request->prefer("return=representation");
 $request->body = [
@@ -61,16 +63,19 @@ $request->body = [
     "purchase_units" => [[
         "amount" => [
             "currency_code" => "MXN",
-            "value" => number_format($totalFinal, 2, ".", ""), // ← TOTAL FINAL CON DESCUENTO
+            "value" => number_format($totalFinal, 2, ".", ""),
             "breakdown" => [
                 "item_total" => [
                     "currency_code" => "MXN",
-                    "value" => number_format($total, 2, ".", "")
+                    "value" => number_format($subtotal, 2, ".", "")
                 ],
-                // Aplicar descuento a PayPal
                 "discount" => [
                     "currency_code" => "MXN",
                     "value" => number_format($descuento, 2, ".", "")
+                ],
+                "tax_total" => [
+                    "currency_code" => "MXN",
+                    "value" => number_format($iva, 2, ".", "")
                 ]
             ]
         ],
@@ -84,4 +89,5 @@ try {
 } catch (Exception $e) {
     echo json_encode(["error" => $e->getMessage()]);
 }
+
 
