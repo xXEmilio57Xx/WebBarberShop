@@ -27,7 +27,18 @@
                     <li class="nav-item"><a class="nav-link active" href="productos.html">Productos</a></li>
                     <li class="nav-item"><a class="nav-link" href="citas.html">Citas</a></li>
                     <li class="nav-item"><a class="nav-link" href="pago.html">Pago</a></li>
-                    <li class="nav-item"><a class="btn btn-outline-light ms-3 px-3 py-1 rounded-pill fw-semibold" href="login.html">Iniciar sesión</a></li>
+                    <!-- INICIAR SESIÓN -->
+                    <li class="nav-item">
+                        <a id="btnLogin" class="btn btn-outline-light ms-3 px-3 py-1 rounded-pill fw-semibold" href="login.html">
+                        Iniciar sesión
+                        </a>
+                    </li>
+
+                    <!-- SALUDO (OCULTO AL INICIO) -->
+                    <span id="saludo" class="text-white ms-3 fw-semibold" style="display:none;"></span>
+
+                    <button id="btnLogout" class="btn btn-danger ms-3" style="display:none;">Cerrar sesión</button>
+                    
                      <li class="nav-item">
                         <a class="nav-link" href="carrito.html">
                             <img src="img/carrito.png" alt="">
@@ -126,6 +137,7 @@
     <script src="js/principal.js?v=6.0"></script>
     <script src="js/cart.js"></script>
     <script src="js/productos.js"></script>
+    <script src="js/index.js"></script>
 
 
     <!-- Script específico para productos -->

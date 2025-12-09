@@ -47,7 +47,7 @@ $_SESSION["rol"] = $usuario["rol"];
 $nombreJS = json_encode($usuario["nombre"]);
 
 // Si quieres redirigir a admin según rol:
-$destino = ($usuario["rol"] === "admin") ? "../admin.html" : "../index.html";
+$destino = ($usuario["rol"] === "admin") ? "../admin/admin_citas.html" : "../index.html";
 
 echo "<!doctype html>
 <html>

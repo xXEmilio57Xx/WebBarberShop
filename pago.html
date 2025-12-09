@@ -19,6 +19,17 @@
         <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
         <li class="nav-item"><a class="nav-link" href="productos.html">Productos</a></li>
         <li class="nav-item"><a class="nav-link active" href="pagos.html">Pagos</a></li>
+          <!-- INICIAR SESIÓN -->
+                <li class="nav-item">
+                    <a id="btnLogin" class="btn btn-outline-light ms-3 px-3 py-1 rounded-pill fw-semibold" href="login.html">
+                        Iniciar sesión
+                    </a>
+                </li>
+
+                <!-- SALUDO (OCULTO AL INICIO) -->
+                <span id="saludo" class="text-white ms-3 fw-semibold" style="display:none;"></span>
+
+                <button id="btnLogout" class="btn btn-danger ms-3" style="display:none;">Cerrar sesión</button>
       </ul>
     </div>
   </div>
@@ -69,6 +80,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://www.paypal.com/sdk/js?client-id=ARJKG7lXUiGLKfn_Jt6P8uhQV-FqDy44pQw8DHnVG5JqunKvmF2K116D2w6978lPoVVpfclqK94bDnyo&currency=MXN"></script>
 <script src="js/pago.js"></script>
+<script src="js/index.js"></script>
 </body>
 </html>
 

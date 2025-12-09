@@ -94,7 +94,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 document.getElementById("modalPrecio").innerText = precio;
                 document.getElementById("modalImagen").src = imagen;
 
-                // Botón para carrito dentro del modal
+                // 🔥 NECESARIO PARA QUE LA RESEÑA FUNCIONE
+                document.getElementById("producto_id").value = id;
+
+                // Botón carrito
                 const addCart = document.getElementById("modalAddCartBtn");
                 addCart.dataset.id = id;
                 addCart.dataset.nombre = nombre;
@@ -103,6 +106,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 new bootstrap.Modal(document.getElementById("modalProducto")).show();
             });
+
         });
 
         // ============================
