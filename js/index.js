@@ -34,6 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Acción de logout -> redirige al php logout que destruye session y limpia localStorage
     btnLogout.addEventListener("click", () => {
-        window.location.href = "php/logout.php";
+        window.location.href = "/SergioBarberShop/php/logout.php";
     });
 });
